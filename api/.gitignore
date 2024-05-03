@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.aws-sam
+.ignore
+coverage
+env.json
+node_modules
+build
+# ignore log files
+logs
+*.log

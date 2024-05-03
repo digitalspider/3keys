@@ -1,0 +1,46 @@
+{
+  "name": "3keys-api",
+  "version": "1.0.0",
+  "description": "The API behind 3keys",
+  "scripts": {
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "build": "sam build --beta-features",
+    "clean": "cross-env ./node_modules/.bin/rimraf .aws-sam .vscode",
+    "prebuild": "cross-env ./node_modules/.bin/rimraf .aws-sam .vscode",
+    "prewatch": "cross-env ./node_modules/.bin/rimraf .aws-sam .vscode",
+    "lint": "eslint . --ext .js --format=pretty",
+    "lint:quiet": "npm run lint -- --quiet",
+    "lint:fix": "npm run lint -- --quiet --fix",
+    "validate": "npm run lint:quiet && npm run test",
+    "start:api": "sam local start-api --log-file logs-api.log --env-vars env.json",
+    "start": "npm run build --cached && npm run start:api"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalspider/3keys.git"
+  },
+  "keywords": [
+    "secure",
+    "encrypted",
+    "chat",
+    "3keys"
+  ],
+  "author": "digitalspider",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/digitalspider/3keys/issues"
+  },
+  "homepage": "https://github.com/digitalspider/3keys#readme",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.568.0",
+    "@aws-sdk/client-s3": "^3.568.0",
+    "@aws-sdk/client-secrets-manager": "^3.568.0",
+    "@aws-sdk/lib-dynamodb": "^3.568.0"
+  },
+  "devDependencies": {
+    "aws-sdk-client-mock": "^2.0.0",
+    "cross-env": "^7.0.3",
+    "jest": "^29.2.1",
+    "rimraf": "^5.0.5"
+  }
+}
