@@ -14,4 +14,4 @@ export const HTTP_METHOD = {
   DELETE: 'DELETE',
   HEAD: 'HEAD',
   OPTIONS: 'OPTIONS',
-}
+};

@@ -1,12 +1,12 @@
 import {
-  GetObjectCommand,
-  S3Client,
-  ListObjectsCommand,
   CopyObjectCommand,
   DeleteObjectCommand,
+  GetObjectCommand,
+  ListObjectsCommand,
   PutObjectCommand,
-} from '@aws-sdk/client-s3';
-import { AWS } from '../../common/constants';
+  S3Client,
+} from "@aws-sdk/client-s3";
+import { AWS } from "../../common/constants";
 
 const { AWS_REGION_APSE2 } = AWS.REGIONS;
 
@@ -19,27 +19,27 @@ function getClient() {
 }
 
 export async function upload(input) {
-  s3Client = s3Client || getClient();
+  s3Client ||= getClient();
   return s3Client.send(new PutObjectCommand(input));
 }
 
 export async function getObject(input) {
-  s3Client = s3Client || getClient();
+  s3Client ||= getClient();
   return s3Client.send(new GetObjectCommand(input));
 }
 
 export async function listFiles(input) {
-  s3Client = s3Client || getClient();
+  s3Client ||= getClient();
   return s3Client.send(new ListObjectsCommand(input));
 }
 
 export async function copyFile(input) {
-  s3Client = s3Client || getClient();
+  s3Client ||= getClient();
   return s3Client.send(new CopyObjectCommand(input));
 }
 
 export async function deleteFile(input) {
-  s3Client = s3Client || getClient();
+  s3Client ||= getClient();
   return s3Client.send(new DeleteObjectCommand(input));
 }
 
@@ -47,12 +47,15 @@ export async function getObjectToBuffer(Bucket, Key) {
   const response = await getObject({
     Bucket,
     Key,
-  });
+  }),
 
-  const stream = response.Body;
+   stream = response.Body;
 
-  return new Promise<Buffer>((resolve, reject) => {
-    const chunks = [];
+  return (
+    new Promise() <
+    Buffer >
+    ((resolve, reject) => {
+      const chunks = [];
     stream.on('data', (chunk) => chunks.push(chunk));
     stream.once('end', () => resolve(Buffer.concat(chunks)));
     stream.once('error', reject);

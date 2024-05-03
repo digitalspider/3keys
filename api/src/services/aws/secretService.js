@@ -1,4 +1,4 @@
-import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { AWS } from '../../common/constants';
 
 const { AWS_REGION_APSE2 } = AWS.REGIONS;
@@ -38,8 +38,8 @@ export async function getSecret(secretName, isJson = true) {
 function getSecretFromEnvVariable(secretName, isJson = true) {
   if (!secretName) return null;
 
-  const envName = `SECRET_${secretName.replace(/-/g, '_')}`.toUpperCase();
-  const secretString = process.env[envName];
+  const envName = `SECRET_${secretName.replace(/-/g, '_')}`.toUpperCase(),
+    secretString = process.env[envName];
   if (!secretString) {
     return null;
   }
@@ -56,8 +56,8 @@ async function getSecretFromSecretsManager(secretName, isJson = true) {
   if (!client) {
     client = getClient();
   }
-  const command = new GetSecretValueCommand({ SecretId: secretName });
-  const response = await client.send(command);
+  const command = new GetSecretValueCommand({ SecretId: secretName }),
+    response = await client.send(command);
   let secretString;
   // Decode based on the secret type
   if (response.SecretString !== undefined) {

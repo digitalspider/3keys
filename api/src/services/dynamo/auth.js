@@ -1,6 +1,6 @@
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { AWSENV } from '../../common/config';
-import { create, deleteItem as _delete, get, scan, update } from '../aws/dynamoService';
+import { deleteItem as _delete, create, get, scan, update } from '../aws/dynamoService';
 
 const TABLE_NAME = `auth-${AWSENV}`;
 
@@ -21,15 +21,15 @@ export async function getItem(item) {
 
 export async function listItems() {
   const response = await scan({
-    TableName: TABLE_NAME,
-  });
-  const items = response.Items || [];
+      TableName: TABLE_NAME,
+    }),
+    items = response.Items || [];
   return items.map((item) => unmarshall(item));
 }
 
 export async function updateItem(item) {
-  const { tenantId, expiryInSec } = item;
-  const updates = [];
+  const { tenantId, expiryInSec } = item,
+    updates = [];
   if (tenantId !== undefined && tenantId !== null) {
     updates.push({ name: 'tenantId', value: tenantId });
   }
@@ -37,14 +37,14 @@ export async function updateItem(item) {
     updates.push({ name: 'expiryInSec', value: expiryInSec });
   }
 
-  const { UpdateExpression, ExpressionAttributeValues } = getDynamoUpdateExpressions(updates);
-  const input = {
-    TableName: TABLE_NAME,
-    Key: getDynamoKey(item),
-    UpdateExpression,
-    ExpressionAttributeValues,
-  };
-  const response = await update(input);
+  const { UpdateExpression, ExpressionAttributeValues } = getDynamoUpdateExpressions(updates),
+    input = {
+      TableName: TABLE_NAME,
+      Key: getDynamoKey(item),
+      UpdateExpression,
+      ExpressionAttributeValues,
+    },
+    response = await update(input);
   return response.Attributes;
 }
 
@@ -53,8 +53,8 @@ export async function deleteItem(item) {
 }
 
 function getDynamoUpdateExpressions(input) {
-  const UpdateExpression = 'set ' + input.map((kv) => `${kv.name} = :${kv.name}`).join(',');
-  const ExpressionAttributeValues = {};
+  const UpdateExpression = `set ${input.map((kv) => `${kv.name} = :${kv.name}`).join(',')}`,
+    ExpressionAttributeValues = {};
   input.forEach((kv) => {
     ExpressionAttributeValues[`:${kv.name}`] = kv.value;
   });
@@ -63,35 +63,35 @@ function getDynamoUpdateExpressions(input) {
 
 export async function count() {
   const response = await scan({
-    TableName: TABLE_NAME,
-    Select: 'COUNT',
-  });
-  const count = response.Items?.length || 0;
+      TableName: TABLE_NAME,
+      Select: 'COUNT',
+    }),
+    count = response.Items?.length || 0;
   return count;
 }
 
 /**
- * assuming all input value is a string
+ * Assuming all input value is a string
  * condition is equal only
  *
  * @param inputs { name: 'ronnie', age: '29' }
  * @returns
-  {
-    "FilterExpression": "#name = :name = #age = :age",
-    "ExpressionAttributeNames": { "#name": "name", "#age": "age" },
-    "ExpressionAttributeValues": { ":name": { "S": "ronnie" }, ":age": { "S": "24" } }
-  }
+ *{
+ *  "FilterExpression": "#name = :name = #age = :age",
+ *  "ExpressionAttributeNames": { "#name": "name", "#age": "age" },
+ *  "ExpressionAttributeValues": { ":name": { "S": "ronnie" }, ":age": { "S": "24" } }
+ *}
  */
 function getFilterExpression(inputs) {
   // eslint-disable-line
-  const filterExpression = [];
-  const ExpressionAttributeNames = {};
-  const ExpressionAttributeValues = {};
+  const filterExpression = [],
+    ExpressionAttributeNames = {},
+    ExpressionAttributeValues = {};
 
   for (const [key, value] of Object.entries(inputs)) {
     filterExpression.push(`#${key} = :${key}`);
-    ExpressionAttributeNames['#' + key] = key;
-    ExpressionAttributeValues[':' + key] = { S: value };
+    ExpressionAttributeNames[`#${key}`] = key;
+    ExpressionAttributeValues[`:${key}`] = { S: value };
   }
 
   return {
@@ -103,10 +103,9 @@ function getFilterExpression(inputs) {
 
 export async function searchItems(filter) {
   const response = await scan({
-    TableName: TABLE_NAME,
-    ...getFilterExpression(filter),
-  });
-
-  const items = response.Items || [];
+      TableName: TABLE_NAME,
+      ...getFilterExpression(filter),
+    }),
+    items = response.Items || [];
   return items.map((item) => unmarshall(item));
 }
