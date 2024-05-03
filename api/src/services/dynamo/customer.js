@@ -5,8 +5,8 @@ import { deleteItem as _delete, create, get, scan, update } from '../aws/dynamoS
 const TABLE_NAME = `customers-${AWSENV}`;
 
 function getDynamoKey(keys) {
-  const { tenantId, id } = keys;
-  return { tenantId, id };
+  const { id } = keys;
+  return { id };
 }
 
 export async function createItem(item) {
