@@ -59,5 +59,5 @@ export async function getObjectToBuffer(Bucket, Key) {
     stream.on('data', (chunk) => chunks.push(chunk));
     stream.once('end', () => resolve(Buffer.concat(chunks)));
     stream.once('error', reject);
-  });
+  }));
 }
